@@ -1,0 +1,5 @@
+.idea
+.vscode
+.env
+prisma/migrations
+node_modules

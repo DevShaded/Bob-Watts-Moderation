@@ -1,0 +1,27 @@
+{
+	"type": "module",
+	"name": "bob-watts-moderation",
+	"version": "0.0.1",
+	"description": "The open-source moderation Discord Bot",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DevShaded/Bob-Watts-Moderation.git"
+	},
+	"author": "DevShaded",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/DevShaded/Bob-Watts-Moderation/issues"
+	},
+	"homepage": "https://github.com/DevShaded/Bob-Watts-Moderation#readme",
+	"dependencies": {
+		"discord.js": "^13.8.1",
+		"dotenv": "^16.0.1"
+	},
+	"devDependencies": {
+		"prisma": "^4.0.0"
+	}
+}
