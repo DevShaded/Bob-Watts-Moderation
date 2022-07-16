@@ -5,7 +5,8 @@
 	"description": "The open-source moderation Discord Bot",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"deploy": "npm run deploy_commands",
+		"deploy_commands": "node deploy-commands.js"
 	},
 	"repository": {
 		"type": "git",
@@ -18,6 +19,8 @@
 	},
 	"homepage": "https://github.com/DevShaded/Bob-Watts-Moderation#readme",
 	"dependencies": {
+		"@discordjs/rest": "^0.5.0",
+		"discord-api-types": "^0.36.2",
 		"discord.js": "^13.8.1",
 		"dotenv": "^16.0.1"
 	},
