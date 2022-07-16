@@ -18,6 +18,7 @@
 	},
 	"homepage": "https://github.com/DevShaded/Bob-Watts-Moderation#readme",
 	"dependencies": {
+		"@prisma/client": "^4.0.0",
 		"discord.js": "^13.8.1",
 		"dotenv": "^16.0.1"
 	},

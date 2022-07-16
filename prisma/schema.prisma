@@ -6,3 +6,223 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Users {
+  id               String   @id @default(uuid())
+  accountId        String   @unique
+  username         String?
+  discriminator    String?
+  avatar           String?
+  bot              Boolean? @default(false)
+  createdTimestamp String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  Messages       Messages[]
+  Infractions    Infractions[]
+  Moderators     Moderators[]
+  GuildMembers   GuildMembers[]
+  ThreadChannels ThreadChannels[]
+  UserChannels   UserChannels[]
+
+  @@index([accountId])
+}
+
+model Guilds {
+  id        String   @id @default(uuid())
+  guildId   String   @unique
+  name      String
+  iconURL   String?
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Messages       Messages[]
+  Infractions    Infractions[]
+  Moderators     Moderators[]
+  GuildMembers   GuildMembers[]
+  GuildLogs      GuildLogs[]
+  GuildChannels  GuildChannels[]
+  ThreadChannels ThreadChannels[]
+
+  @@index([guildId])
+}
+
+model Channels {
+  id               String   @id @default(uuid())
+  channelId        String   @unique
+  name             String
+  nsfw             Boolean
+  topic            String?
+  type             String
+  createdTimestamp String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+
+  Messages        Messages[]
+  GuildChannels   GuildChannels[]
+  ChannelMessages ChannelMessages[]
+  UserChannels    UserChannels[]
+
+  @@index([channelId])
+}
+
+model Messages {
+  id        String    @id @default(uuid())
+  User      Users?    @relation(fields: [accountId], references: [id])
+  Guild     Guilds?   @relation(fields: [guildId], references: [id])
+  Channel   Channels? @relation(fields: [channelId], references: [id])
+  accountId String?
+  guildId   String?
+  channelId String?
+  messageId String    @unique
+  content   String?   @db.VarChar(4000)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  ChannelMessages ChannelMessages[]
+  @@index([messageId])
+}
+
+model Infractions {
+  id        String   @id @default(uuid())
+  Guild     Guilds?  @relation(fields: [guildId], references: [id])
+  User      Users?   @relation(fields: [accountId], references: [id])
+  guildId   String?
+  accountId String?
+  reason    String   @db.VarChar(4000)
+  type      String
+  expires   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([guildId])
+  @@index([accountId])
+}
+
+model Moderators {
+  id        String   @id @default(uuid())
+  Guild     Guilds?  @relation(fields: [guildId], references: [id])
+  User      Users?   @relation(fields: [accountId], references: [id])
+  guildId   String?
+  accountId String?
+  level     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([guildId])
+  @@index([accountId])
+}
+
+model GuildMembers {
+  id                    String   @id @default(uuid())
+  Guild                 Guilds?  @relation(fields: [guildId], references: [id])
+  User                  Users?   @relation(fields: [accountId], references: [id])
+  guildId               String?
+  accountId             String?  @unique
+  memberId              String   @unique
+  bannable              Boolean
+  displayColor          Int
+  displayHexColor       String
+  displayName           String?
+  joinedTimestamp       String?
+  kickable              Boolean
+  manageable            Boolean
+  nickname              String?
+  premiumSinceTimestamp BigInt?  @db.BigInt()
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([guildId])
+  @@index([accountId])
+}
+
+model GuildLogs {
+  id              String   @id @default(uuid())
+  Guild           Guilds?  @relation(fields: [guildId], references: [id])
+  guildId         String?  @unique
+  infractions_log String?  @unique
+  mute_role       String?  @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([guildId])
+}
+
+model GuildChannels {
+  id                String    @id @default(uuid())
+  Guild             Guilds?   @relation(fields: [guildId], references: [id])
+  channel           Channels? @relation(fields: [channelId], references: [id])
+  guildId           String?
+  channelId         String?   @unique
+  name              String
+  deletable         Boolean
+  manageable        Boolean
+  parentId          String?
+  permissionsLocked Boolean?
+  position          Int?
+  rawPosition       Int
+  viewable          Boolean
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([guildId])
+  @@index([channelId])
+}
+
+model ThreadChannels {
+  id                  String   @id @default(uuid())
+  threadId            String   @unique
+  Owner               Users?   @relation(fields: [ownerId], references: [id])
+  Guild               Guilds?  @relation(fields: [guildId], references: [id])
+  ownerId             String?
+  guildId             String?  @unique
+  threadName          String
+  archived            Boolean?
+  archivedAt          String?
+  archivedTimestamp   String?
+  autoArchiveDuration Int?
+  createdTimestamp    String
+  editable            Boolean
+  invitable           Boolean?
+  joinable            Boolean
+  joined              Boolean
+  locked              Boolean
+  manageable          Boolean
+  memberCount         Int
+  type                String
+  unarchivable        Boolean
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([guildId])
+}
+
+model ChannelMessages {
+  id          String    @id @default(uuid())
+  Message     Messages? @relation(fields: [messageId], references: [id])
+  Channel     Channels? @relation(fields: [channelId], references: [id])
+  messageId   String?
+  channelId   String?
+  channelName String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([messageId])
+  @@index([channelId])
+}
+
+model UserChannels {
+  id        String    @id @default(uuid())
+  User      Users?    @relation(fields: [accountId], references: [id])
+  Channel   Channels? @relation(fields: [channelId], references: [id])
+  accountId String?
+  channelId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([accountId])
+  @@index([channelId])
+}
