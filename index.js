@@ -38,6 +38,8 @@ const client = new Client({
 // Emit when the client becomes ready to start working.
 client.once('ready', async () => {
 	console.log('\x1b[32mBot has succesfully signed in and is listening to events\x1b[0m');
+
+	await client.user.setActivity('the bad people', { type: 'WATCHING' });
 });
 
 // Emit when an interaction is created
